@@ -139,16 +139,6 @@
             "field_type": "text"
         },
         {
-            "name": "Colour",
-            "description": "Highlight colour of the server in the server list",
-            "env_variable": "COLOUR",
-            "default_value": "6b727c",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:6",
-            "field_type": "text"
-        },
-        {
             "name": "Config Overrides Path",
             "description": "Path to server config overrides file",
             "env_variable": "OVERRIDES_PATH",
