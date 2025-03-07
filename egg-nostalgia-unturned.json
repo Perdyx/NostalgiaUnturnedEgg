@@ -10,7 +10,7 @@
     "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
     "features": null,
     "docker_images": {
-        "restoremonarchy\/pterodactyl-unturned-git:latest": "restoremonarchy\/pterodactyl-unturned-git:latest"
+        "perds\/nostalgia-unturned-egg:latest": "perds\/nostalgia-unturned-egg:latest"
     },
     "file_denylist": [],
     "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
