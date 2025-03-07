@@ -85,9 +85,6 @@ if [ "${ADDON_KITS}" = "true" ]; then
 fi
 
 # Check if ${COLOUR}, ${SERVER_ICON}, and ${SERVER_DESCRIPTION} are set and adjust server config
-print "COLOUR: ${COLOUR}"
-print "SERVER_ICON: ${SERVER_ICON}"
-print "SERVER_DESCRIPTION: ${SERVER_DESCRIPTION}"
 if [ -n "${COLOUR}" ] && [ -n "${SERVER_ICON}" ] && [ -n "${SERVER_DESCRIPTION}" ]; then
     echo -e "${GREEN}Updating server configuration with provided icon, description, and colour"
     
