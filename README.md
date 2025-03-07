@@ -1,6 +1,6 @@
-# Unturned Git Pterodactyl Egg Setup
+# Nostalgia Unturned Pterodactyl Egg Setup
 
-This README guide will walk you through the process of setting up the Unturned Git Pterodactyl egg with your own GitHub repository.
+This README guide will walk you through the process of setting up the Unturned Git Pterodactyl egg with your own GitHub repository. Please note that this is essentially the same project as its parent (https://github.com/RestoreMonarchyPlugins/UnturnedGit), however with a few added modifications such as variables to toggle activation of 2x loot or the Kits plugin.
 
 ## Overview
 
