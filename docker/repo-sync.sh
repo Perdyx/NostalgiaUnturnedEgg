@@ -62,13 +62,40 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
-# read egg-config.json file in REPOSITORY_DIR and delete all paths specified in Delete array, if REPOSITORY_DIR is not specified then read egg-config.json file in TEMP_DIR
-if [ -n "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${REPOSITORY_DIR}"
-    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${REPOSITORY_DIR}/egg-config.json)
+# Check if ADDON_LOOT2X is set to true and adjust loot spawn values in server config
+if [ "${ADDON_LOOT2X}" = "true" ]; then
+    echo -e "${GREEN}ADDON_LOOT2X is enabled"
+
+    if [ -f "${TEMP_DIR}/Loot2x/overrides.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Loot2x/overrides.json"
+        jq -s '.[0] * .[1]' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+    else
+        echo -e "${GREEN}${TEMP_DIR}/Loot2x/overrides.json not found, skipping overrides"
+    fi
+fi
+
+# Check if ADDON_KITS is set to true and install kits plugin/required configs
+if [ "${ADDON_KITS}" = "true" ]; then
+    echo -e "${GREEN}ADDON_KITS is enabled"
+
+    cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
+
+    mkdir -p ${INSTALL_DIR}/Rocket/Plugins/Kits
+    cp -r ${TEMP_DIR}/Kits/Kits ${INSTALL_DIR}/Rocket/Plugins/Kits
+fi
+
+# Check if ${COLOUR}, ${SERVER_ICON}, and ${SERVER_DESCRIPTION} are set and adjust server config
+print "COLOUR: ${COLOUR}"
+print "SERVER_ICON: ${SERVER_ICON}"
+print "SERVER_DESCRIPTION: ${SERVER_DESCRIPTION}"
+if [ -n "${COLOUR}" ] && [ -n "${SERVER_ICON}" ] && [ -n "${SERVER_DESCRIPTION}" ]; then
+    echo -e "${GREEN}Updating server configuration with provided icon, description, and colour"
+    
+    jq --arg icon "${SERVER_ICON}" --arg desc "<color=#${COLOUR}>${SERVER_DESCRIPTION}</color>" \
+       '.Browser.Icon = $icon | .Browser.Thumbnail = $icon | .Browser.Desc_Hint = $desc | .Browser.Desc_Server_List = $desc' \
+       ${INSTALL_DIR}/Config.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
 else
-    echo "${GREEN}Reading egg-config.json file in ${TEMP_DIR}"
-    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/egg-config.json)
+    echo -e "${GREEN}COLOUR, SERVER_ICON, or SERVER_DESCRIPTION not set, skipping server config update"
 fi
 
 # Delete paths specified in Delete array else log that it doesn't exist
