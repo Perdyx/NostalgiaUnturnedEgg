@@ -76,7 +76,7 @@ if [ -n "${OVERRIDES_PATH}" ]; then
 fi
 
 # Check if ADDON_LOOT2X is set to true and adjust loot spawn values in server config
-if [ "${ADDON_LOOT2X}" = "true" ]; then
+if [ "${ADDON_LOOT2X}" == "1" ]; then
     echo -e "${GREEN}ADDON_LOOT2X is enabled"
 
     if [ -f "${TEMP_DIR}/Loot2x/overrides.json" ]; then
@@ -89,7 +89,7 @@ if [ "${ADDON_LOOT2X}" = "true" ]; then
 fi
 
 # Check if ADDON_KITS is set to true and install kits plugin/required configs
-if [ "${ADDON_KITS}" = "true" ]; then
+if [ "${ADDON_KITS}" == "1" ]; then
     echo -e "${GREEN}ADDON_KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
