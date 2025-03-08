@@ -119,13 +119,13 @@
             "field_type": "text"
         },
         {
-            "name": "Repository Directory",
-            "description": "The folder inside the repository that should be used for this server. Leave empty to use the root of the repository.",
-            "env_variable": "REPOSITORY_DIR",
+            "name": "Config Set",
+            "description": "The folder inside the repository that should be used for this server.",
+            "env_variable": "CONFIG_SET",
             "default_value": "VanillaPlus",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string|max:255",
+            "rules": "required|string|max:255",
             "field_type": "text"
         },
         {

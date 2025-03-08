@@ -20,10 +20,10 @@ if [ -z "${REPOSITORY_BRANCH}" ]; then
     REPOSITORY_BRANCH="master"
 fi
 
-# check if REPOSITORY_DIR is set
-if [ -z "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}REPOSITORY_DIR is not set, repository root will be used"
-    REPOSITORY_DIR=""
+# check if CONFIG_SET is set
+if [ -z "${CONFIG_SET}" ]; then
+    echo -e "${GREEN}CONFIG_SET is not set, repository root will be used"
+    CONFIG_SET=""
 fi
 
 # check if REPOSITORY_ACCESS_TOKEN is set
@@ -62,6 +62,35 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
+# Delete paths specified in Delete array else log that it doesn't exist
+for DELETE_PATH in ${DELETE_PATHS}; do
+    if [ -d "${DELETE_PATH}" ]; then
+        echo -e "${GREEN}Deleting ${DELETE_PATH}"
+        rm -rf ${DELETE_PATH}
+    else
+        echo -e "${GREEN}${DELETE_PATH} does not exist, skipping deletion"
+    fi
+done
+
+# Create the INSTALL_DIR if it doesn't exist
+if [ ! -d "${INSTALL_DIR}" ]; then
+    echo -e "${GREEN}Creating install directory ${INSTALL_DIR}"
+    mkdir -p ${INSTALL_DIR}
+fi
+
+# Move the contents of the specified CONFIG_SET to the INSTALL_DIR
+if [ -n "${CONFIG_SET}" ]; then
+    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/${CONFIG_SET} to ${INSTALL_DIR}"
+    ## use cp command
+    cp -r ${TEMP_DIR}/${CONFIG_SET}/* ${INSTALL_DIR}
+fi
+
+
+
+### START CUSTOM SCRIPT ###
+
+
+
 # Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
 if [ -n "${OVERRIDES_PATH}" ]; then
     echo -e "${GREEN}OVERRIDES_PATH is set"
@@ -82,7 +111,7 @@ if [ "${ADDON_LOOT2X}" == "1" ]; then
     if [ -f "${TEMP_DIR}/Loot2x/overrides.json" ]; then
         echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Loot2x/overrides.json"
 
-        jq -s '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
         echo -e "${GREEN}${TEMP_DIR}/Loot2x/overrides.json not found, skipping overrides"
     fi
@@ -98,28 +127,11 @@ if [ "${ADDON_KITS}" == "1" ]; then
     cp -r ${TEMP_DIR}/Kits/Kits ${INSTALL_DIR}/Rocket/Plugins/Kits
 fi
 
-# Delete paths specified in Delete array else log that it doesn't exist
-for DELETE_PATH in ${DELETE_PATHS}; do
-    if [ -d "${DELETE_PATH}" ]; then
-        echo -e "${GREEN}Deleting ${DELETE_PATH}"
-        rm -rf ${DELETE_PATH}
-    else
-        echo -e "${GREEN}${DELETE_PATH} does not exist, skipping deletion"
-    fi
-done
 
-# Create the INSTALL_DIR if it doesn't exist
-if [ ! -d "${INSTALL_DIR}" ]; then
-    echo -e "${GREEN}Creating install directory ${INSTALL_DIR}"
-    mkdir -p ${INSTALL_DIR}
-fi
 
-# Move the contents of the specified REPOSITORY_DIR to the INSTALL_DIR
-if [ -n "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/${REPOSITORY_DIR} to ${INSTALL_DIR}"
-    ## use cp command
-    cp -r ${TEMP_DIR}/${REPOSITORY_DIR}/* ${INSTALL_DIR}
-fi
+### END CUSTOM SCRIPT ###
+
+
 
 # Clean up: remove the temporary directory
 echo -e "${GREEN}Cleaning up: removing temporary directory ${TEMP_DIR}"
