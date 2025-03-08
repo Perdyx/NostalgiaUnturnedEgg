@@ -90,10 +90,6 @@ fi
 
 
 
-# Reset game config to default to ensure overrides can be disabled or removed
-echo -e "${GREEN}Resetting server config to defaults"
-cp ${TEMP_DIR}/Defaults.json ${INSTALL_DIR}/Config.json
-
 # Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
 if [ -n "${OVERRIDES_PATH}" ]; then
     echo -e "${GREEN}OVERRIDES_PATH is set"
