@@ -91,6 +91,10 @@ fi
 
 
 
+# Reset game config to default to ensure overrides can be disabled or removed
+echo -e "${GREEN}Resetting server config to defaults"
+cp ${TEMP_DIR}/Defaults.json ${INSTALL_DIR}/Config.json
+
 # Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
 if [ -n "${OVERRIDES_PATH}" ]; then
     echo -e "${GREEN}OVERRIDES_PATH is set"
@@ -104,16 +108,16 @@ if [ -n "${OVERRIDES_PATH}" ]; then
     fi
 fi
 
-# Check if ADDON_LOOT2X is set to true and adjust loot spawn values in server config
-if [ "${ADDON_LOOT2X}" == "1" ]; then
-    echo -e "${GREEN}ADDON_LOOT2X is enabled"
+# Check if ADDON_LOOTMX is set to true and adjust loot spawn values in server config
+if [ "${ADDON_LOOTMX}" == "1" ]; then
+    echo -e "${GREEN}ADDON_LOOTMX is enabled"
 
-    if [ -f "${TEMP_DIR}/Loot2x/overrides.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Loot2x/overrides.json"
+    if [ -f "${TEMP_DIR}/LootMx/overrides.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/overrides.json"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/Loot2x/overrides.json not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/LootMx/overrides.json not found, skipping overrides"
     fi
 fi
 
@@ -122,7 +126,12 @@ if [ "${ADDON_KITS}" == "1" ]; then
     echo -e "${GREEN}ADDON_KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
-    cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins
+    cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
+else
+    echo -e "${GREEN}ADDON_KITS is disabled, skipping installation and removing existing plugin"
+
+    rm -f ${INSTALL_DIR}/Rocket/Plugins/Kits.dll
+    rm -rf ${INSTALL_DIR}/Rocket/Plugins/Kits
 fi
 
 

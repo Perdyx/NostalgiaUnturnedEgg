@@ -199,13 +199,13 @@
             "field_type": "text"
         },
         {
-            "name": "2x Loot",
-            "description": "Doubles all regular\/mega zombie drops as well as area spawns",
-            "env_variable": "ADDON_LOOT2X",
-            "default_value": "0",
+            "name": "Loot Multiplier",
+            "description": "Multiplies all regular\/mega zombie drops as well as area spawns by this value",
+            "env_variable": "ADDON_LOOTMX",
+            "default_value": "1",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|boolean",
+            "rules": "required|integer|between:1,100",
             "field_type": "text"
         },
         {
