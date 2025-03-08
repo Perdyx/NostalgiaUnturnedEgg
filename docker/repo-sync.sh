@@ -69,7 +69,7 @@ if [ -n "${OVERRIDES_PATH}" ]; then
     if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES_PATH}" ]; then
         echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES_PATH}"
 
-        jq -s '.[0] * .[1]' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES_PATH} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES_PATH} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
         echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES_PATH} not found, skipping overrides"
     fi
@@ -82,7 +82,7 @@ if [ "${ADDON_LOOT2X}" = "true" ]; then
     if [ -f "${TEMP_DIR}/Loot2x/overrides.json" ]; then
         echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Loot2x/overrides.json"
 
-        jq -s '.[0] * .[1]' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq -s '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Loot2x/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
         echo -e "${GREEN}${TEMP_DIR}/Loot2x/overrides.json not found, skipping overrides"
     fi
