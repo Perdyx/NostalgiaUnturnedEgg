@@ -131,6 +131,8 @@ if [ "${KITS}" == "1" ]; then
     echo -e "${GREEN}KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
+    
+    mkdir -p ${INSTALL_DIR}/Rocket/Plugins/Kits
     cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
 else
     echo -e "${GREEN}KITS is disabled, skipping installation" # and removing existing plugin"
