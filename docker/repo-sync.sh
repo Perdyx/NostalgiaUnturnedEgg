@@ -81,7 +81,6 @@ fi
 # Move the contents of the specified CONFIG_SET to the INSTALL_DIR
 if [ -n "${CONFIG_SET}" ]; then
     echo -e "${GREEN}Moving contents of ${TEMP_DIR}/${CONFIG_SET} to ${INSTALL_DIR}"
-    ## use cp command
     cp -r ${TEMP_DIR}/${CONFIG_SET}/* ${INSTALL_DIR}
 fi
 
@@ -109,7 +108,7 @@ if [ -n "${OVERRIDES_PATH}" ]; then
 fi
 
 # Check if LOOTMX is set to true and adjust loot spawn values in server config
-if [ "${LOOTMX}" == "1" ]; then
+if [ "${LOOTMX}" != "0" ]; then
     echo -e "${GREEN}LOOTMX is enabled"
 
     if [ -f "${TEMP_DIR}/LootMx/overrides.json" ]; then
@@ -122,7 +121,7 @@ if [ "${LOOTMX}" == "1" ]; then
 fi
 
 # Check if KITS is set to true and install kits plugin/required configs
-if [ "${KITS}" == "1" ]; then
+if [ "${KITS}" = "1" ]; then
     echo -e "${GREEN}KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
