@@ -7,7 +7,6 @@ TEMP_DIR="tmp/repo"
 # set the echo color to green
 GREEN='\033[0;32m'
 
-
 # check if REPOSITORY_URL is set
 if [ -z "${REPOSITORY_URL}" ]; then
     echo -e "${GREEN}REPOSITORY_URL is not set, skipping repository clone"
