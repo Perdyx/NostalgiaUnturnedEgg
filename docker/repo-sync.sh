@@ -108,9 +108,9 @@ if [ -n "${OVERRIDES_PATH}" ]; then
     fi
 fi
 
-# Check if ADDON_LOOTMX is set to true and adjust loot spawn values in server config
-if [ "${ADDON_LOOTMX}" == "1" ]; then
-    echo -e "${GREEN}ADDON_LOOTMX is enabled"
+# Check if LOOTMX is set to true and adjust loot spawn values in server config
+if [ "${LOOTMX}" == "1" ]; then
+    echo -e "${GREEN}LOOTMX is enabled"
 
     if [ -f "${TEMP_DIR}/LootMx/overrides.json" ]; then
         echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/overrides.json"
@@ -121,14 +121,14 @@ if [ "${ADDON_LOOTMX}" == "1" ]; then
     fi
 fi
 
-# Check if ADDON_KITS is set to true and install kits plugin/required configs
-if [ "${ADDON_KITS}" == "1" ]; then
-    echo -e "${GREEN}ADDON_KITS is enabled"
+# Check if KITS is set to true and install kits plugin/required configs
+if [ "${KITS}" == "1" ]; then
+    echo -e "${GREEN}KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
     cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
 else
-    echo -e "${GREEN}ADDON_KITS is disabled, skipping installation and removing existing plugin"
+    echo -e "${GREEN}KITS is disabled, skipping installation and removing existing plugin"
 
     rm -f ${INSTALL_DIR}/Rocket/Plugins/Kits.dll
     rm -rf ${INSTALL_DIR}/Rocket/Plugins/Kits

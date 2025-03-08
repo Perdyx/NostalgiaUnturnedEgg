@@ -201,7 +201,7 @@
         {
             "name": "Loot Multiplier",
             "description": "Multiplies all regular\/mega zombie drops as well as area spawns by this value",
-            "env_variable": "ADDON_LOOTMX",
+            "env_variable": "LOOTMX",
             "default_value": "1",
             "user_viewable": true,
             "user_editable": true,
@@ -211,7 +211,7 @@
         {
             "name": "Kits",
             "description": "Enables kits plugin",
-            "env_variable": "ADDON_KITS",
+            "env_variable": "KITS",
             "default_value": "0",
             "user_viewable": true,
             "user_editable": true,
