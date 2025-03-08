@@ -103,7 +103,7 @@ if [ -n "${OVERRIDES}" ]; then
     fi
 fi
 
-# Check if LOOTMX is set to true and adjust loot spawn values in server config
+# Check if LOOTMX is set and adjust loot spawn values in server config
 if [ -n "${LOOTMX}" ]; then
     echo -e "${GREEN}LOOTMX is enabled"
 

@@ -201,7 +201,7 @@
         {
             "name": "Loot Multiplier Config",
             "description": "Changes all regular\/mega zombie drops as well as area spawns",
-            "env_variable": "LOOTMX_OVERRIDES",
+            "env_variable": "LOOTMX",
             "default_value": "1x",
             "user_viewable": true,
             "user_editable": true,
