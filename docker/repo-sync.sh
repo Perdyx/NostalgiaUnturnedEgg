@@ -122,7 +122,7 @@ if [ "${ADDON_KITS}" == "1" ]; then
     echo -e "${GREEN}ADDON_KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
-    cp -r ${TEMP_DIR}/Kits/Kits ${INSTALL_DIR}/Rocket/Plugins
+    cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins
 fi
 
 
