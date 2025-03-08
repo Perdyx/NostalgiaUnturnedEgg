@@ -104,7 +104,6 @@ if [ -n "${OVERRIDES}" ]; then
 fi
 
 # Check if LOOTMX is set and adjust loot spawn values in server config
-echo LOOTMX EQUALS ${LOOTMX}
 if [  "${LOOTMX}" == "1x" ]; then
     echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
 else
