@@ -141,7 +141,7 @@
         {
             "name": "Server-specific Config Overrides",
             "description": "Path to server config overrides file",
-            "env_variable": "OVERRIDES_PATH",
+            "env_variable": "OVERRIDES",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
@@ -199,13 +199,13 @@
             "field_type": "text"
         },
         {
-            "name": "Loot Multiplier",
-            "description": "Multiplies all regular\/mega zombie drops as well as area spawns by this value",
-            "env_variable": "LOOTMX",
-            "default_value": "1",
+            "name": "Loot Multiplier Config",
+            "description": "Changes all regular\/mega zombie drops as well as area spawns",
+            "env_variable": "LOOTMX_OVERRIDES",
+            "default_value": "",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|integer|between:1,100",
+            "rules": "nullable|string|max:64",
             "field_type": "text"
         },
         {

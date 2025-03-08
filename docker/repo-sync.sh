@@ -90,34 +90,36 @@ fi
 
 
 
-# Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
-if [ -n "${OVERRIDES_PATH}" ]; then
-    echo -e "${GREEN}OVERRIDES_PATH is set"
+# Check if OVERRIDES is set and apply overrides to server config from the specified file
+if [ -n "${OVERRIDES}" ]; then
+    echo -e "${GREEN}OVERRIDES is set"
 
-    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES_PATH}" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES_PATH}"
+    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES}" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES}"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES_PATH} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES_PATH} not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES} not found, skipping overrides"
     fi
 fi
 
 # Check if LOOTMX is set to true and adjust loot spawn values in server config
-if [ "${LOOTMX}" != "0" ]; then
+if [ -n "${LOOTMX}" ]; then
     echo -e "${GREEN}LOOTMX is enabled"
 
-    if [ -f "${TEMP_DIR}/LootMx/overrides.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/overrides.json"
+    if [ -f "${TEMP_DIR}/LootMx/${LOOTMX}" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/${LOOTMX}"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/overrides.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/${LOOTMX} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/LootMx/overrides.json not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/LootMx/${LOOTMX} not found, skipping overrides"
     fi
+else
+    echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
 fi
 
-# Check if KITS is set to true and install kits plugin/required configs
-if [ "${KITS}" = "1" ]; then
+# Check if KITS is set to true and install kits plugin/required configs. If false, remove kits plugin and configs
+if [ "${KITS}" == "1" ]; then
     echo -e "${GREEN}KITS is enabled"
 
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
