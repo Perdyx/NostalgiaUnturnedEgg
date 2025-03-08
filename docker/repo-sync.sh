@@ -63,7 +63,7 @@ fi
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
 # Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
-if[ -n "${OVERRIDES_PATH}" ]; then
+if [ -n "${OVERRIDES_PATH}" ]; then
     echo -e "${GREEN}OVERRIDES_PATH is set"
 
     if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES_PATH}" ]; then
