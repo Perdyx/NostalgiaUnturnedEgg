@@ -63,13 +63,13 @@ fi
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
 # Check if OVERRIDES_PATH is set and apply overrides to server config from the specified file
-if["${OVERRIDES_PATH}" != ""]; then
-    echo -e "${GREEN}OVERRIDES_PATH is enabled"
+if[ -n "${OVERRIDES_PATH}" ]; then
+    echo -e "${GREEN}OVERRIDES_PATH is set"
 
-    if [ -f "${TEMP_DIR}/${OVERRIDES_PATH}" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/${OVERRIDES_PATH}"
+    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES_PATH}" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES_PATH}"
 
-        jq -s '.[0] * .[1]' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/${OVERRIDES_PATH} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq -s '.[0] * .[1]' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES_PATH} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
         echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES_PATH} not found, skipping overrides"
     fi
