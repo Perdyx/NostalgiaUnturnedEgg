@@ -94,12 +94,12 @@ fi
 if [ -n "${OVERRIDES}" ]; then
     echo -e "${GREEN}OVERRIDES is set"
 
-    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES}" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES}"
+    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES}.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES}.json"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES} not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES}.json not found, skipping overrides"
     fi
 fi
 
@@ -108,11 +108,11 @@ if [ -n "${LOOTMX}" ]; then
     echo -e "${GREEN}LOOTMX is enabled"
 
     if [ -f "${TEMP_DIR}/LootMx/${LOOTMX}" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/${LOOTMX}"
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/${LOOTMX}.json"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/${LOOTMX} > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/${LOOTMX}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/LootMx/${LOOTMX} not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/LootMx/${LOOTMX}.json not found, skipping overrides"
     fi
 else
     echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
