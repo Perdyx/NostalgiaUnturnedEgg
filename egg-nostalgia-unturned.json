@@ -139,7 +139,7 @@
             "field_type": "text"
         },
         {
-            "name": "Config Overrides Path",
+            "name": "Server-specific Config Overrides",
             "description": "Path to server config overrides file",
             "env_variable": "OVERRIDES_PATH",
             "default_value": "",
