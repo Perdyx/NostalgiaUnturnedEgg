@@ -61,6 +61,15 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
+# read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array, if CONFIG_SET is not specified then read egg-config.json file in TEMP_DIR
+if [ -n "${CONFIG_SET}" ]; then
+    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
+    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
+else
+    echo "${GREEN}Reading egg-config.json file in ${TEMP_DIR}"
+    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/egg-config.json)
+fi
+
 # Delete paths specified in Delete array else log that it doesn't exist
 for DELETE_PATH in ${DELETE_PATHS}; do
     if [ -d "${DELETE_PATH}" ]; then
@@ -124,15 +133,15 @@ if [ "${KITS}" == "1" ]; then
     cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
     cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
 else
-    echo -e "${GREEN}KITS is disabled, skipping installation and removing existing plugin"
+    echo -e "${GREEN}KITS is disabled, skipping installation" # and removing existing plugin"
 
-    if [ -f "${INSTALL_DIR}/Rocket/Plugins/Kits.dll" ]; then
-        rm -f ${INSTALL_DIR}/Rocket/Plugins/Kits.dll
-    fi
+    # if [ -f "${INSTALL_DIR}/Rocket/Plugins/Kits.dll" ]; then
+    #     rm -f ${INSTALL_DIR}/Rocket/Plugins/Kits.dll
+    # fi
 
-    if [ -d "${INSTALL_DIR}/Rocket/Plugins/Kits" ]; then
-        rm -rf ${INSTALL_DIR}/Rocket/Plugins/Kits
-    fi
+    # if [ -d "${INSTALL_DIR}/Rocket/Plugins/Kits" ]; then
+    #     rm -rf ${INSTALL_DIR}/Rocket/Plugins/Kits
+    # fi
 fi
 
 
