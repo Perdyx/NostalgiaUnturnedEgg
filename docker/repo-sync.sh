@@ -143,11 +143,11 @@ if [ -n "${WORKSHOP}" ]; then
     echo -e "${GREEN}Workshop config overrides found, applying overrides"
 
     if [ -f "${TEMP_DIR}/WorkshopDownloadConfig.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/Workshop/${WORKSHOP}.json"
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
 
-        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/Workshop/${WORKSHOP}.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
+        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/Workshop/${WORKSHOP}.json not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json not found, skipping overrides"
     fi
 fi
 
