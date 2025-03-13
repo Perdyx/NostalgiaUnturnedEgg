@@ -102,12 +102,12 @@ fi
 if [ -n "${OVERRIDES}" ]; then
     echo -e "${GREEN}OVERRIDES is set"
 
-    if [ -f "${TEMP_DIR}/Overrides/${OVERRIDES}.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/${OVERRIDES}.json"
+    if [ -f "${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/${OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/${OVERRIDES}.json not found, skipping overrides"
+        echo -e "${GREEN}${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json not found, skipping overrides"
     fi
 fi
 
@@ -135,15 +135,20 @@ if [ "${KITS}" == "1" ]; then
     mkdir -p ${INSTALL_DIR}/Rocket/Plugins/Kits
     cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
 else
-    echo -e "${GREEN}KITS is disabled, skipping installation" # and removing existing plugin"
+    echo -e "${GREEN}KITS is disabled, skipping installation"
+fi
 
-    # if [ -f "${INSTALL_DIR}/Rocket/Plugins/Kits.dll" ]; then
-    #     rm -f ${INSTALL_DIR}/Rocket/Plugins/Kits.dll
-    # fi
+# Check if workshop config exists and apply overrides
+if [ -n "${WORKSHOP}" ]; then
+    echo -e "${GREEN}Workshop config overrides found, applying overrides"
 
-    # if [ -d "${INSTALL_DIR}/Rocket/Plugins/Kits" ]; then
-    #     rm -rf ${INSTALL_DIR}/Rocket/Plugins/Kits
-    # fi
+    if [ -f "${TEMP_DIR}/WorkshopDownloadConfig.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/WorkshopDownloadConfig.json"
+
+        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/WorkshopDownloadConfig.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
+    else
+        echo -e "${GREEN}${TEMP_DIR}/WorkshopDownloadConfig.json not found, skipping overrides"
+    fi
 fi
 
 
