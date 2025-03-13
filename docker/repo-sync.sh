@@ -111,6 +111,19 @@ if [ -n "${OVERRIDES}" ]; then
     fi
 fi
 
+# Check if WORKSHOP is set and apply overrides to workshop config from the specified file
+if [ -n "${WORKSHOP}" ]; then
+    echo -e "${GREEN}Workshop config overrides found, applying overrides"
+
+    if [ -f "${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
+
+        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
+    else
+        echo -e "${GREEN}${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json not found, skipping overrides"
+    fi
+fi
+
 # Check if LOOTMX is set and adjust loot spawn values in server config
 if [  "${LOOTMX}" == "1x" ]; then
     echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
@@ -136,19 +149,6 @@ if [ "${KITS}" == "1" ]; then
     cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
 else
     echo -e "${GREEN}KITS is disabled, skipping installation"
-fi
-
-# Check if workshop config exists and apply overrides
-if [ -n "${WORKSHOP}" ]; then
-    echo -e "${GREEN}Workshop config overrides found, applying overrides"
-
-    if [ -f "${TEMP_DIR}/WorkshopDownloadConfig.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
-
-        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
-    else
-        echo -e "${GREEN}${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json not found, skipping overrides"
-    fi
 fi
 
 
