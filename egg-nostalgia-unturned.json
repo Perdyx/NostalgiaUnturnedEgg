@@ -1,0 +1,242 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-06-05T14:15:36-07:00",
+    "name": "Nostalgia Unturned",
+    "author": "marianasaltyns@gmail.com",
+    "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
+    "features": null,
+    "docker_images": {
+        "perds\/nostalgia-unturned-egg:latest": "perds\/nostalgia-unturned-egg:latest"
+    },
+    "file_denylist": [],
+    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Loading level: 100%\"\r\n}",
+        "logs": "{\r\n    \"custom\": true,\r\n    \"location\": \"latest.log\"\r\n}",
+        "stop": "shutdown"
+    },
+    "scripts": {
+        "installation": {
+            "script": "apt update\r\napt -y --no-install-recommends install curl lib32gcc1 ca-certificates\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\nexport HOME=\/mnt\/server\r\n.\/steamcmd.sh +@sSteamCmdForcePlatformBitness 64 +login anonymous +force_install_dir \/mnt\/server +app_update 1110390 validate +quit\r\nmkdir -p \/mnt\/server\/Servers\/unturned\/Server\r\nmkdir \/mnt\/server\/linux64\r\ncp \/mnt\/server\/steam\/linux64\/* \/mnt\/server\/linux64\r\nmkdir \/mnt\/server\/Unturned_Headless_Data\/Plugins\/x86_64\/",
+            "container": "ubuntu:18.04",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Framework",
+            "description": "Select a framework that should be used",
+            "env_variable": "FRAMEWORK",
+            "default_value": "rocket",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:vanilla,rocket,openmod,openmod & rocket,rocketmodfix,openmod & rocketmodfix",
+            "field_type": "text"
+        },
+        {
+            "name": "Framework Auto-Update",
+            "description": "Set whether you want the server to use auto update of the selected framework",
+            "env_variable": "FRAMEWORK_AUTOUPDATE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Unturned Auto Update",
+            "description": "Set on to enable automatic updates to Unturned",
+            "env_variable": "GAME_AUTOUPDATE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "CPU Priority",
+            "description": "CPU priority set for a specific server",
+            "env_variable": "CPU_PRIORITY",
+            "default_value": "-normal",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Login Token",
+            "description": "This login token allows you to publicly show your server on the server list.",
+            "env_variable": "LOGIN_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:50",
+            "field_type": "text"
+        },
+        {
+            "name": "Repository Enabled",
+            "description": "Set on to enable repository sync",
+            "env_variable": "REPOSITORY_ENABLED",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Repository URL",
+            "description": "The URL to the Git repository that should be cloned for this server.",
+            "env_variable": "REPOSITORY_URL",
+            "default_value": "github.com\/Perdyx\/NostalgiaUnturnedConfigs.git",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Repository Access Token",
+            "description": "The access token to use when cloning the repository. This is required for private repositories.",
+            "env_variable": "REPOSITORY_ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Branch",
+            "description": "The branch of the Git repository that should be used for this server.",
+            "env_variable": "REPOSITORY_BRANCH",
+            "default_value": "main",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "ROCKET_DIR",
+            "description": "The RocketMod installation that should be used for this server.",
+            "env_variable": "ROCKET_DIR",
+            "default_value": "VanillaPlus",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Install Directory",
+            "description": "The directory where the server files should be installed.",
+            "env_variable": "INSTALL_DIR",
+            "default_value": "Servers\/unturned",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Server-specific Config Overrides",
+            "description": "Path to server config overrides file",
+            "env_variable": "CONFIG_OVERRIDES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Name",
+            "description": "Name as it appears in the server list",
+            "env_variable": "SERVER_NAME",
+            "default_value": "Unturned",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Gamemode",
+            "description": "Server gamemode",
+            "env_variable": "GAMEMODE",
+            "default_value": "Normal",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required||in:Easy,Normal,Hard",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "Maximum allowed players",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "32",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:1,100",
+            "field_type": "text"
+        },
+        {
+            "name": "Map",
+            "description": "Server map",
+            "env_variable": "MAP",
+            "default_value": "PEI",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Perspective",
+            "description": "Allowed player perspectives",
+            "env_variable": "PERSPECTIVE",
+            "default_value": "Both",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required||in:Both,First,Third,Vehicle",
+            "field_type": "text"
+        },
+        {
+            "name": "Kits",
+            "description": "Enables kits plugin",
+            "env_variable": "KITS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Loot Multiplier Config",
+            "description": "Changes all regular\/mega zombie drops as well as area spawns",
+            "env_variable": "LOOTMX",
+            "default_value": "1x",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Workshop Overrides",
+            "description": "Path to workshop config overrides file",
+            "env_variable": "WORKSHOP",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "GAMEPLAY_OVERRIDES",
+            "description": "Path to gameplay overrides file",
+            "env_variable": "GAMEPLAY_OVERRIDES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        }
+    ]
+}
