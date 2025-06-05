@@ -92,7 +92,7 @@
             "name": "Repository URL",
             "description": "The URL to the Git repository that should be cloned for this server.",
             "env_variable": "REPOSITORY_URL",
-            "default_value": "github.com\/Perdyx\/NostalgiaUnturnedConfigs.git",
+            "default_value": "",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",

@@ -92,10 +92,13 @@ fi
 
 
 
-# Move the contents of the specified ROCKET_DIR to the INSTALL_DIR
-if [ -n "${ROCKET_DIR}" ]; then
-    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/Rocket/${ROCKET_DIR} to ${INSTALL_DIR}/Rocket/"
-    cp -r ${TEMP_DIR}/Rocket/${ROCKET_DIR}/* ${INSTALL_DIR}/Rocket/
+# Apply egg-config.json
+if [ -f "${TEMP_DIR}/egg-config.json" ]; then
+    echo -e "${GREEN}Copying ${TEMP_DIR}/egg-config.json to ${INSTALL_DIR}/egg-config.json"
+
+    cp ${TEMP_DIR}/egg-config.json ${INSTALL_DIR}/egg-config.json
+else
+    echo -e "${GREEN}${TEMP_DIR}/egg-config.json not found, skipping"
 fi
 
 # Check if CONFIG_OVERRIDES is set and apply overrides to server config from the specified file
@@ -152,6 +155,12 @@ if [ -n "${WORKSHOP}" ]; then
     else
         echo -e "${GREEN}${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json not found, skipping workshop overrides"
     fi
+fi
+
+# Move the contents of the specified ROCKET_DIR to the INSTALL_DIR
+if [ -n "${ROCKET_DIR}" ]; then
+    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/Rocket/${ROCKET_DIR} to ${INSTALL_DIR}/Rocket/"
+    cp -r ${TEMP_DIR}/Rocket/${ROCKET_DIR}/* ${INSTALL_DIR}/Rocket/
 fi
 
 # Check if KITS is set to true and install kits plugin/required configs. If false, remove kits plugin and configs
