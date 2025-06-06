@@ -116,56 +116,64 @@ if [ -n "${CONFIG_OVERRIDES}" ]; then
 fi
 
 # Check if GAMEPLAY_OVERRIDES is set and apply overrides to server config from the specified file
-if [ -f "${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json" ]; then
-    echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json"
+GAMEPLAY_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Gameplay/${GAMEPLAY_OVERRIDES}.json"
+if [ -f "$GAMEPLAY_OVERRIDE_PATH" ]; then
+    echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with $GAMEPLAY_OVERRIDE_PATH"
 
-    jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+    jq '. * input' ${INSTALL_DIR}/Config.json "$GAMEPLAY_OVERRIDE_PATH" > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
 else
-    echo -e "${GREEN}${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json not found, skipping gameplay overrides"
+    echo -e "${GREEN}$GAMEPLAY_OVERRIDE_PATH not found, skipping gameplay overrides"
 fi
 
 # Check if LOOTMX is set and adjust loot spawn values in server config
+LOOTMX_PATH="${TEMP_DIR}/LootMx/${LOOTMX}.json"
 if [  "${LOOTMX}" == "1x" ]; then
     echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
 else
     echo -e "${GREEN}LOOTMX is enabled"
 
-    if [ -f "${TEMP_DIR}/LootMx/${LOOTMX}.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/LootMx/${LOOTMX}.json"
+    if [ -f "$LOOTMX_PATH" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with $LOOTMX_PATH"
 
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/LootMx/${LOOTMX}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
+        jq '. * input' ${INSTALL_DIR}/Config.json "$LOOTMX_PATH" > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/LootMx/${LOOTMX}.json not found, skipping overrides"
+        echo -e "${GREEN}$LOOTMX_PATH not found, skipping overrides"
     fi
 fi
 
 # Check if WORKSHOP is set and apply overrides to workshop config from the specified file
+WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
 if [ -n "${WORKSHOP}" ]; then
     echo -e "${GREEN}Workshop config overrides found, applying workshop overrides"
 
-    if [ -f "${TEMP_DIR}/Overrides/Config/${OVERRIDES}.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
+    if [ -f "$WORKSHOP_OVERRIDE_PATH" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with $WORKSHOP_OVERRIDE_PATH"
 
-        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json ${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
+        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json "$WORKSHOP_OVERRIDE_PATH" > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
     else
-        echo -e "${GREEN}${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json not found, skipping workshop overrides"
+        echo -e "${GREEN}$WORKSHOP_OVERRIDE_PATH not found, skipping workshop overrides"
     fi
 fi
 
 # Move the contents of the specified ROCKET_DIR to the INSTALL_DIR
+ROCKET_SOURCE_PATH="${TEMP_DIR}/Rocket/${ROCKET_DIR}"
+ROCKET_DEST_PATH="${INSTALL_DIR}/Rocket/"
 if [ -n "${ROCKET_DIR}" ]; then
-    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/Rocket/${ROCKET_DIR} to ${INSTALL_DIR}/Rocket/"
-    cp -r ${TEMP_DIR}/Rocket/${ROCKET_DIR}/* ${INSTALL_DIR}/Rocket/
+    echo -e "${GREEN}Moving contents of $ROCKET_SOURCE_PATH to $ROCKET_DEST_PATH"
+    cp -r $ROCKET_SOURCE_PATH/* $ROCKET_DEST_PATH
 fi
 
 # Check if KITS is set to true and install kits plugin/required configs. If false, remove kits plugin and configs
+KITS_DLL_PATH="${TEMP_DIR}/Kits/Kits.dll"
+KITS_SOURCE_PATH="${TEMP_DIR}/Kits/Kits/"
+KITS_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins/Kits"
 if [ "${KITS}" == "1" ]; then
     echo -e "${GREEN}KITS is enabled"
 
-    cp ${TEMP_DIR}/Kits/Kits.dll ${INSTALL_DIR}/Rocket/Plugins
+    cp $KITS_DLL_PATH ${INSTALL_DIR}/Rocket/Plugins
     
-    mkdir -p ${INSTALL_DIR}/Rocket/Plugins/Kits
-    cp ${TEMP_DIR}/Kits/Kits/* ${INSTALL_DIR}/Rocket/Plugins/Kits
+    mkdir -p $KITS_DEST_PATH
+    cp $KITS_SOURCE_PATH* $KITS_DEST_PATH
 else
     echo -e "${GREEN}KITS is disabled, skipping installation"
 fi
