@@ -5,39 +5,33 @@ sleep 1
 cd /home/container
 
 TEMP_DIR="tmp/repo"
-# set the echo color to green
+# Set the echo color to green
 GREEN='\033[0;32m'
 
-# check if REPOSITORY_URL is set
+# Check if REPOSITORY_URL is set
 if [ -z "${REPOSITORY_URL}" ]; then
     echo -e "${GREEN}REPOSITORY_URL is not set, skipping repository clone"
     exit 0
 fi
 
-# check if REPOSITORY_BRANCH is set
+# Check if REPOSITORY_BRANCH is set
 if [ -z "${REPOSITORY_BRANCH}" ]; then
-    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'master'"
-    REPOSITORY_BRANCH="master"
+    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
+    REPOSITORY_BRANCH="main"
 fi
 
-# check if CONFIG_SET is set
-if [ -z "${CONFIG_SET}" ]; then
-    echo -e "${GREEN}CONFIG_SET is not set, repository root will be used"
-    CONFIG_SET=""
-fi
-
-# check if REPOSITORY_ACCESS_TOKEN is set
+# Check if REPOSITORY_ACCESS_TOKEN is set
 if [ -z "${REPOSITORY_ACCESS_TOKEN}" ]; then
     echo -e "${GREEN}REPOSITORY_ACCESS_TOKEN is not set, cloning without authentication"
 fi
 
-# check if INSTALL_DIR is set
+# Check if INSTALL_DIR is set
 if [ -z "${INSTALL_DIR}" ]; then
     echo -e "${GREEN}INSTALL_DIR is not set, defaulting to 'Servers/unturned'"
     INSTALL_DIR="Servers/unturned"
 fi
 
-# remove temp dir if exists
+# Remove temp dir if exists
 if [ -d "${TEMP_DIR}" ]; then
     rm -rf ${TEMP_DIR}
     echo -e "${GREEN}Temporary directory ${TEMP_DIR} has been removed."
@@ -62,7 +56,7 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
-# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array, if CONFIG_SET is not specified then read egg-config.json file in TEMP_DIR
+# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
 if [ -n "${CONFIG_SET}" ]; then
     echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
     DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
@@ -87,75 +81,51 @@ if [ ! -d "${INSTALL_DIR}" ]; then
     mkdir -p ${INSTALL_DIR}
 fi
 
-
-
-### START CUSTOM SCRIPT ###
-
-
-
 # Apply egg-config.json
 if [ -f "${TEMP_DIR}/egg-config.json" ]; then
     echo -e "${GREEN}Copying ${TEMP_DIR}/egg-config.json to ${INSTALL_DIR}/egg-config.json"
-
     cp ${TEMP_DIR}/egg-config.json ${INSTALL_DIR}/egg-config.json
 else
     echo -e "${GREEN}${TEMP_DIR}/egg-config.json not found, skipping"
 fi
 
-# Check if CONFIG_OVERRIDES is set and apply overrides to server config from the specified file
+# Collect override paths for config merging
+CONFIG_MERGE_PATHS=("${INSTALL_DIR}/Config.json")
+
 if [ -n "${CONFIG_OVERRIDES}" ]; then
-    echo -e "${GREEN}CONFIG_OVERRIDES is set"
-
-    if [ -f "${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json"
-
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
-    else
-        echo -e "${GREEN}${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json not found, skipping config overrides"
-    fi
+    CONFIG_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json"
+    [ -f "$CONFIG_OVERRIDE_PATH" ] && CONFIG_MERGE_PATHS+=("$CONFIG_OVERRIDE_PATH")
 fi
 
-# Check if GAMEPLAY_OVERRIDES is set and apply overrides to server config from the specified file
 GAMEPLAY_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Gameplay/${GAMEPLAY_OVERRIDES}.json"
-if [ -f "$GAMEPLAY_OVERRIDE_PATH" ]; then
-    echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with $GAMEPLAY_OVERRIDE_PATH"
+[ -f "$GAMEPLAY_OVERRIDE_PATH" ] && CONFIG_MERGE_PATHS+=("$GAMEPLAY_OVERRIDE_PATH")
 
-    jq '. * input' ${INSTALL_DIR}/Config.json "$GAMEPLAY_OVERRIDE_PATH" > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
-else
-    echo -e "${GREEN}$GAMEPLAY_OVERRIDE_PATH not found, skipping gameplay overrides"
-fi
-
-# Check if LOOTMX is set and adjust loot spawn values in server config
 LOOTMX_PATH="${TEMP_DIR}/LootMx/${LOOTMX}.json"
-if [  "${LOOTMX}" == "1x" ]; then
-    echo -e "${GREEN}LOOTMX is disabled, skipping loot spawn adjustments"
-else
-    echo -e "${GREEN}LOOTMX is enabled"
-
-    if [ -f "$LOOTMX_PATH" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with $LOOTMX_PATH"
-
-        jq '. * input' ${INSTALL_DIR}/Config.json "$LOOTMX_PATH" > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
-    else
-        echo -e "${GREEN}$LOOTMX_PATH not found, skipping overrides"
-    fi
+if [ "${LOOTMX}" != "1x" ] && [ -f "$LOOTMX_PATH" ]; then
+    CONFIG_MERGE_PATHS+=("$LOOTMX_PATH")
 fi
 
-# Check if WORKSHOP is set and apply overrides to workshop config from the specified file
+# Merge all config overrides at once if any overrides exist
+if [ ${#CONFIG_MERGE_PATHS[@]} -gt 1 ]; then
+    echo -e "${GREEN}Merging config overrides: ${CONFIG_MERGE_PATHS[*]}"
+    jq -s 'reduce .[] as $item ({}; . * $item)' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json" && mv "${INSTALL_DIR}/Config.tmp.json" "${INSTALL_DIR}/Config.json"
+else
+    echo -e "${GREEN}No config overrides to merge."
+fi
+
+# Apply workshop overrides if set
 WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
 if [ -n "${WORKSHOP}" ]; then
     echo -e "${GREEN}Workshop config overrides found, applying workshop overrides"
-
     if [ -f "$WORKSHOP_OVERRIDE_PATH" ]; then
         echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with $WORKSHOP_OVERRIDE_PATH"
-
         jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json "$WORKSHOP_OVERRIDE_PATH" > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
     else
         echo -e "${GREEN}$WORKSHOP_OVERRIDE_PATH not found, skipping workshop overrides"
     fi
 fi
 
-# Move the contents of the specified ROCKET_DIR to the INSTALL_DIR
+# Move Rocket directory contents if set
 ROCKET_SOURCE_PATH="${TEMP_DIR}/Rocket/${ROCKET_DIR}"
 ROCKET_DEST_PATH="${INSTALL_DIR}/Rocket/"
 if [ -n "${ROCKET_DIR}" ]; then
@@ -163,28 +133,20 @@ if [ -n "${ROCKET_DIR}" ]; then
     cp -r $ROCKET_SOURCE_PATH/* $ROCKET_DEST_PATH
 fi
 
-# Check if KITS is set to true and install kits plugin/required configs. If false, remove kits plugin and configs
+# Install Kits plugin/configs if enabled
 KITS_DLL_PATH="${TEMP_DIR}/Kits/Kits.dll"
 KITS_SOURCE_PATH="${TEMP_DIR}/Kits/Kits/"
 KITS_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins/Kits"
 if [ "${KITS}" == "1" ]; then
-    echo -e "${GREEN}KITS is enabled"
-
+    echo -e "${GREEN}Kits are enabled"
     cp $KITS_DLL_PATH ${INSTALL_DIR}/Rocket/Plugins
-    
     mkdir -p $KITS_DEST_PATH
     cp $KITS_SOURCE_PATH* $KITS_DEST_PATH
 else
-    echo -e "${GREEN}KITS is disabled, skipping installation"
+    echo -e "${GREEN}Kits are disabled, skipping installation"
 fi
 
-
-
-### END CUSTOM SCRIPT ###
-
-
-
-# Clean up: remove the temporary directory
+# Clean up temporary directory
 echo -e "${GREEN}Cleaning up: removing temporary directory ${TEMP_DIR}"
 rm -rf ${TEMP_DIR}
 
