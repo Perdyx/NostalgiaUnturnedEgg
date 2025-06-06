@@ -116,18 +116,12 @@ if [ -n "${CONFIG_OVERRIDES}" ]; then
 fi
 
 # Check if GAMEPLAY_OVERRIDES is set and apply overrides to server config from the specified file
-if [  "${GAMEPLAY_OVERRIDES}" == "1x" ]; then
-    echo -e "${GREEN}GAMEPLAY_OVERRIDES is disabled, skipping gameplay overrides"
+if [ -f "${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json" ]; then
+    echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json"
+
+    jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
 else
-    echo -e "${GREEN}GAMEPLAY_OVERRIDES is enabled"
-
-    if [ -f "${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json" ]; then
-        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/Config.json with ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json"
-
-        jq '. * input' ${INSTALL_DIR}/Config.json ${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json > ${INSTALL_DIR}/Config.tmp.json && mv ${INSTALL_DIR}/Config.tmp.json ${INSTALL_DIR}/Config.json
-    else
-        echo -e "${GREEN}${TEMP_DIR}/Custom/${GAMEPLAY_OVERRIDES}.json not found, skipping gameplay overrides"
-    fi
+    echo -e "${GREEN}${TEMP_DIR}/Gameplay/${GAMEPLAY_OVERRIDES}.json not found, skipping gameplay overrides"
 fi
 
 # Check if LOOTMX is set and adjust loot spawn values in server config
