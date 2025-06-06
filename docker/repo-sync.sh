@@ -62,7 +62,7 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
-# read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array, if CONFIG_SET is not specified then read egg-config.json file in TEMP_DIR
+# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array, if CONFIG_SET is not specified then read egg-config.json file in TEMP_DIR
 if [ -n "${CONFIG_SET}" ]; then
     echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
     DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
