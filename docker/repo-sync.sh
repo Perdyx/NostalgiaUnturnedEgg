@@ -114,9 +114,20 @@ if [ ${#CONFIG_MERGE_PATHS[@]} -gt 1 ]; then
         echo -e "${GREEN}jq failed to parse one or more config files. Check ${INSTALL_DIR}/Config.debug.json for input."
         exit 1
     fi
-    jq -s 'reduce .[] as $item ({}; . * $item)' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json"
+    jq -s '
+      def deepmerge(a; b):
+        if (a == null) then b
+        elif (b == null) then a
+        elif ( (a | type) == "object" and (b | type) == "object" ) then
+          reduce (a | keys_unsorted[]) as $key
+            ( {}; . + { ($key): if ($key | in(b)) then deepmerge(a[$key]; b[$key]) else a[$key] end } )
+          + reduce (b | keys_unsorted[]) as $key
+            ( {}; if ($key | in(a)) then . else . + { ($key): b[$key] } end )
+        else b end;
+      reduce .[] as $item ({}; deepmerge(.; $item))
+    ' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json"
     if [ $? -ne 0 ]; then
-        echo -e "${GREEN}jq merge failed. Check ${INSTALL_DIR}/Config.debug.json for input."
+        echo -e "${GREEN}jq deep merge failed. Check ${INSTALL_DIR}/Config.debug.json for input."
         exit 1
     fi
     mv "${INSTALL_DIR}/Config.tmp.json" "${INSTALL_DIR}/Config.json"
