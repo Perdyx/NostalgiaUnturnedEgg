@@ -108,7 +108,18 @@ fi
 # Merge all config overrides at once if any overrides exist
 if [ ${#CONFIG_MERGE_PATHS[@]} -gt 1 ]; then
     echo -e "${GREEN}Merging config overrides: ${CONFIG_MERGE_PATHS[*]}"
-    jq -s 'reduce .[] as $item ({}; . * $item)' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json" && mv "${INSTALL_DIR}/Config.tmp.json" "${INSTALL_DIR}/Config.json"
+    # Debug: print the combined input to check for missing/invalid JSON
+    jq -s '.' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.debug.json"
+    if [ $? -ne 0 ]; then
+        echo -e "${GREEN}jq failed to parse one or more config files. Check ${INSTALL_DIR}/Config.debug.json for input."
+        exit 1
+    fi
+    jq -s 'reduce .[] as $item ({}; . * $item)' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json"
+    if [ $? -ne 0 ]; then
+        echo -e "${GREEN}jq merge failed. Check ${INSTALL_DIR}/Config.debug.json for input."
+        exit 1
+    fi
+    mv "${INSTALL_DIR}/Config.tmp.json" "${INSTALL_DIR}/Config.json"
 else
     echo -e "${GREEN}No config overrides to merge."
 fi
