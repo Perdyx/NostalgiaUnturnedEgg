@@ -89,32 +89,21 @@ else
     echo -e "${GREEN}${TEMP_DIR}/egg-config.json not found, skipping"
 fi
 
-# Collect override paths for config merging
-CONFIG_MERGE_PATHS=("${INSTALL_DIR}/Config.json")
 
-if [ -n "${CONFIG_OVERRIDES}" ]; then
-    CONFIG_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Config/${CONFIG_OVERRIDES}.json"
-    [ -f "$CONFIG_OVERRIDE_PATH" ] && CONFIG_MERGE_PATHS+=("$CONFIG_OVERRIDE_PATH")
-fi
 
-GAMEPLAY_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Gameplay/${GAMEPLAY_OVERRIDES}.json"
-[ -f "$GAMEPLAY_OVERRIDE_PATH" ] && CONFIG_MERGE_PATHS+=("$GAMEPLAY_OVERRIDE_PATH")
-
-LOOTMX_PATH="${TEMP_DIR}/Overrides/LootMx/${LOOTMX}.json"
-if [ "${LOOTMX}" != "1x" ] && [ -f "$LOOTMX_PATH" ]; then
-    CONFIG_MERGE_PATHS+=("$LOOTMX_PATH")
-fi
-
-# Merge all config overrides at once if any overrides exist
-if [ ${#CONFIG_MERGE_PATHS[@]} -gt 1 ]; then
-    echo -e "${GREEN}Merging config overrides: ${CONFIG_MERGE_PATHS[*]}"
-    jq -s 'reduce .[] as $item ({}; . * $item)' "${CONFIG_MERGE_PATHS[@]}" > "${INSTALL_DIR}/Config.tmp.json" && mv "${INSTALL_DIR}/Config.tmp.json" "${INSTALL_DIR}/Config.json"
+if [ -n "${SERVER_CONFIG}" ]; then
+    echo -e "${GREEN}Using server config: ${SERVER_CONFIG}"
 else
-    echo -e "${GREEN}No config overrides to merge."
+    echo -e "${GREEN}SERVER_CONFIG is not set, defaulting to 'Unturned'"
+    SERVER_CONFIG="Unturned"
 fi
+SERVER_CONFIG_PATH="${TEMP_DIR}/Configs/${SERVER_CONFIG}.json"
+cp -f ${SERVER_CONFIG_PATH} ${INSTALL_DIR}/Config.json
+
+
 
 # Apply workshop overrides if set
-WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Overrides/Workshop/${WORKSHOP}.json"
+WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Workshop/${WORKSHOP}.json"
 if [ -n "${WORKSHOP}" ]; then
     echo -e "${GREEN}Workshop config overrides found, applying workshop overrides"
     if [ -f "$WORKSHOP_OVERRIDE_PATH" ]; then

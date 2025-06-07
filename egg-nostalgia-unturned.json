@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2025-06-05T14:15:36-07:00",
+    "exported_at": "2025-06-07T15:26:22-07:00",
     "name": "Nostalgia Unturned",
     "author": "marianasaltyns@gmail.com",
     "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
@@ -92,7 +92,7 @@
             "name": "Repository URL",
             "description": "The URL to the Git repository that should be cloned for this server.",
             "env_variable": "REPOSITORY_URL",
-            "default_value": "",
+            "default_value": "github.com\/Perdyx\/NostalgiaUnturnedConfigs.git",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",
@@ -209,16 +209,6 @@
             "field_type": "text"
         },
         {
-            "name": "Loot Multiplier Config",
-            "description": "Changes all regular\/mega zombie drops as well as area spawns",
-            "env_variable": "LOOTMX",
-            "default_value": "1x",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:64",
-            "field_type": "text"
-        },
-        {
             "name": "Workshop Overrides",
             "description": "Path to workshop config overrides file",
             "env_variable": "WORKSHOP",
@@ -226,16 +216,6 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:64",
-            "field_type": "text"
-        },
-        {
-            "name": "GAMEPLAY_OVERRIDES",
-            "description": "Path to gameplay overrides file",
-            "env_variable": "GAMEPLAY_OVERRIDES",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:64",
             "field_type": "text"
         }
     ]
